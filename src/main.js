@@ -163,14 +163,14 @@ async function getBase64(pathname, inlined = false) {
 }
 
 const optimizeSVG = (svg) => {
-  const svgo = require(`svgo`);
-  const res = new svgo({
+  const { optimize } = require(`svgo`);
+  const result = optimize(svg, {
     multipass: true,
     floatPrecision: 0,
     datauri: "base64",
-  });
+  })
 
-  return res.optimize(svg).then(({ data }) => data);
+  return result.data
 };
 
 async function getTrace(pathname) {
@@ -508,6 +508,7 @@ async function replaceInComponent(edited, node) {
 
 async function optimize(paths) {
   const { size } = fs.statSync(paths.inPath);
+
   if (options.inlineBelow && size < options.inlineBelow) {
     return getBase64(paths.inPath, true);
   }
